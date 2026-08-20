@@ -11,26 +11,22 @@ const ITEM_HEIGHT = (screenWidth * 9 / 16) + 15 + 12 + 60;
 const HLS_URLS = [
     {
         id: "v1",
-        url: "https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8"
-    },
-    {
-        id: "v2",
         url: "http://sample.vodobox.net/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8"
     },
     {
-        id: "v3",
+        id: "v2",
         url: "http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8"
     },
     {
-        id: "v4",
+        id: "v3",
         url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
     },
     {
-        id: "v5",
+        id: "v4",
         url: "https://diceyk6a7voy4.cloudfront.net/e78752a1-2e83-43fa-85ae-3d508be29366/hls/fitfest-sample-1_Ott_Hls_Ts_Avc_Aac_16x9_1280x720p_30Hz_6.0Mbps_qvbr.m3u8"
     },
     {
-        id: "v6",
+        id: "v5",
         url: "https://assets.afcdn.com/video49/20210722/v_645516.m3u8"
     },
 ];
