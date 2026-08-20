@@ -2,7 +2,7 @@ import { useColorTheme } from '@/hooks/useColorTheme';
 import { SymbolView } from 'expo-symbols';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View, Pressable } from 'react-native';
 import { runOnJS, SharedValue, useAnimatedReaction } from 'react-native-reanimated';
 
 function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: string, isFocused: boolean, thumbnailUrl: string }) {
@@ -63,11 +63,13 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
 
     return (
         <View style={styles.card}>
-            {isNearby ? (
-                <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={isFocused} thumbnailUrl={item.thumbnailUrl} />
-            ) : (
-                <Image source={{ uri: item.thumbnailUrl }} style={[styles.thumbnail, { backgroundColor: colors.black as any }]} />
-            )}
+            <Pressable onLongPress={() => { activeVideoIndexSV.value = index; }}>
+                {isNearby ? (
+                    <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={isFocused} thumbnailUrl={item.thumbnailUrl} />
+                ) : (
+                    <Image source={{ uri: item.thumbnailUrl }} style={[styles.thumbnail, { backgroundColor: colors.black as any }]} />
+                )}
+            </Pressable>
 
             <View style={styles.metaContainer}>
                 <View style={styles.avatar}>
