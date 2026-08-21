@@ -1,11 +1,11 @@
 import { useColorTheme } from '@/hooks/useColorTheme';
+import { windowHeight } from '@/utils/dimensions';
 import { SymbolView } from 'expo-symbols';
 import { useVideoPlayer, VideoView } from 'expo-video';
-import React, { useEffect } from 'react';
-import { Dimensions, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { height: windowHeight } = Dimensions.get('window');
 
 function ActiveReelPlayer({
     videoUrl,
@@ -54,7 +54,8 @@ export function ReelCard({
     isActive: boolean;
     isNearby: boolean;
     isMuted: boolean;
-    toggleMute: () => void
+    toggleMute: () => void;
+    height: number;
 }) {
     const insets = useSafeAreaInsets();
     const { colors } = useColorTheme();

@@ -1,14 +1,15 @@
 import { useTabBar } from '@/commonui/TabBarContext';
 import { useColorTheme } from '@/hooks/useColorTheme';
+import { screenHeight } from '@/utils/dimensions';
 import { router, useIsFocused } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useCallback, useRef, useState } from 'react';
-import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, { useAnimatedScrollHandler, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ReelCard } from '../components/ReelCard';
 
-const { height: windowHeight } = Dimensions.get('window');
+const initialWindowHeight = screenHeight
 
 const VIDEOS = Array.from({ length: 10 }).map((_, i) => ({
     videoUrl: i % 2 === 0
@@ -24,6 +25,7 @@ export default function ReelsScreen() {
     const [activeIndex, setActiveIndex] = useState(0);
     const { tabBarOffset } = useTabBar();
     const insets = useSafeAreaInsets();
+    const [containerHeight, setContainerHeight] = useState(initialWindowHeight);
 
     const lastOffsetY = useSharedValue(0);
 
@@ -66,7 +68,10 @@ export default function ReelsScreen() {
     }).current;
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.black as any }]}>
+        <View
+            style={[styles.container, { backgroundColor: colors.black as any }]}
+            onLayout={(e) => setContainerHeight(e.nativeEvent.layout.height)}
+        >
             <Animated.FlatList
                 data={VIDEOS}
                 keyExtractor={(_, index) => `reel-${index}`}
@@ -77,13 +82,14 @@ export default function ReelsScreen() {
                         isNearby={index === activeIndex}
                         isMuted={isMuted}
                         toggleMute={toggleMute}
+                        height={containerHeight}
                     />
                 )}
                 pagingEnabled
                 showsVerticalScrollIndicator={false}
                 onViewableItemsChanged={onViewableItemsChanged}
                 viewabilityConfig={viewabilityConfig}
-                snapToInterval={windowHeight}
+                snapToInterval={containerHeight}
                 snapToAlignment="start"
                 decelerationRate="fast"
                 initialNumToRender={2}
