@@ -76,10 +76,10 @@ export function BottomSheetProvider({ children }: { children: React.ReactNode })
   });
 
   return (
-    <GestureHandlerRootView style={styles.root}>
+    <GestureHandlerRootView style={[styles.root, { backgroundColor: colors.black as any }]}>
       <BottomSheetContext.Provider value={{ expand, close }}>
         <BottomSheetModalProvider>
-          <Animated.View style={[styles.main, mainContentStyle]}>
+          <Animated.View style={[styles.main, mainContentStyle, { backgroundColor: colors.black as any }]}>
             {children}
           </Animated.View>
 
@@ -109,11 +109,9 @@ export function BottomSheetProvider({ children }: { children: React.ReactNode })
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#000"
   },
   main: {
     flex: 1,
-    backgroundColor: '#000',
   },
   sheetBackground: {
     borderTopLeftRadius: 24,

@@ -14,6 +14,7 @@ export function useColorTheme() {
     border: isIOS ? Color.ios.separator : Color.android.darker_gray,
     red: isIOS ? Color.ios.systemRed : Color.android.holo_red_dark,
     black: isIOS ? Color.ios.darkText : Color.android.black,
+    white: '#ffffff',
   };
 
   return {

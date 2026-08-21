@@ -77,30 +77,30 @@ export function ReelCard({
                         <SymbolView
                             name={isMuted ? { ios: 'speaker.slash.fill', android: 'volume_off' } : { ios: 'speaker.wave.2.fill', android: 'volume_up' }}
                             size={26}
-                            tintColor="white"
+                            tintColor={colors.white as any}
                         />
                     </View>
                 </Pressable>
 
                 <Pressable style={styles.actionButton}>
                     <View style={styles.iconContainer}>
-                        <SymbolView name={{ ios: 'heart.fill', android: 'favorite' }} size={32} tintColor="white" />
+                        <SymbolView name={{ ios: 'heart.fill', android: 'favorite' }} size={32} tintColor={colors.white as any} />
                     </View>
-                    <Text style={styles.actionText}>1.2k</Text>
+                    <Text style={[styles.actionText, { color: colors.white as any }]}>1.2k</Text>
                 </Pressable>
 
                 <Pressable style={styles.actionButton}>
                     <View style={styles.iconContainer}>
-                        <SymbolView name={{ ios: 'bubble.right.fill', android: 'chat_bubble' }} size={30} tintColor="white" />
+                        <SymbolView name={{ ios: 'bubble.right.fill', android: 'chat_bubble' }} size={30} tintColor={colors.white as any} />
                     </View>
-                    <Text style={styles.actionText}>400</Text>
+                    <Text style={[styles.actionText, { color: colors.white as any }]}>400</Text>
                 </Pressable>
 
                 <Pressable style={styles.actionButton}>
                     <View style={styles.iconContainer}>
-                        <SymbolView name={{ ios: 'arrowshape.turn.up.right.fill', android: 'reply' }} size={30} tintColor="white" />
+                        <SymbolView name={{ ios: 'arrowshape.turn.up.right.fill', android: 'reply' }} size={30} tintColor={colors.white as any} />
                     </View>
-                    <Text style={styles.actionText}>Share</Text>
+                    <Text style={[styles.actionText, { color: colors.white as any }]}>Share</Text>
                 </Pressable>
             </View>
         </View>
@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     actionText: {
-        color: 'white',
         fontSize: 13,
         fontWeight: '600',
         marginTop: 6,

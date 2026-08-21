@@ -8,6 +8,7 @@ import { SharedValue, useAnimatedReaction } from 'react-native-reanimated';
 import { runOnJS } from 'react-native-worklets';
 
 function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: string, isFocused: boolean, thumbnailUrl: string }) {
+    const { colors } = useColorTheme();
     const [isMuted, setIsMuted] = useState(true);
 
     const player = useVideoPlayer(videoUrl, player => {
@@ -46,7 +47,7 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
                     <SymbolView
                         name={isMuted ? { ios: 'speaker.slash.fill', android: 'volume_off' } : { ios: 'speaker.wave.2.fill', android: 'volume_up' }}
                         size={16}
-                        tintColor="white"
+                        tintColor={colors.white as any}
                     />
                 </Pressable>
             )}

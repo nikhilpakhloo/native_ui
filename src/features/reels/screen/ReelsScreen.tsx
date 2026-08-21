@@ -1,7 +1,11 @@
+import { useTabBar } from '@/commonui/TabBarContext';
 import { useColorTheme } from '@/hooks/useColorTheme';
-import { useIsFocused } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
+import { SymbolView } from 'expo-symbols';
 import { useCallback, useRef, useState } from 'react';
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
+import Animated, { useAnimatedScrollHandler, useSharedValue, withTiming } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ReelCard } from '../components/ReelCard';
 
 const { height: windowHeight } = Dimensions.get('window');
@@ -18,6 +22,34 @@ export default function ReelsScreen() {
     const isFocused = useIsFocused();
     const [isMuted, setIsMuted] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);
+    const { tabBarOffset } = useTabBar();
+    const insets = useSafeAreaInsets();
+
+    const lastOffsetY = useSharedValue(0);
+
+    const scrollHandler = useAnimatedScrollHandler({
+        onScroll: (event) => {
+            const currentOffsetY = event.contentOffset.y;
+            const diff = currentOffsetY - lastOffsetY.value;
+
+            if (currentOffsetY < 0) return;
+
+            if (diff > 5) {
+                if (tabBarOffset.value !== 100) {
+                    // eslint-disable-next-line react-hooks/immutability
+                    tabBarOffset.value = withTiming(100, { duration: 300 });
+                }
+            }
+            else if (diff < -5) {
+                if (tabBarOffset.value !== 0) {
+                    // eslint-disable-next-line react-hooks/immutability
+                    tabBarOffset.value = withTiming(0, { duration: 300 });
+                }
+            }
+
+            lastOffsetY.value = currentOffsetY;
+        },
+    });
 
     const toggleMute = useCallback(() => {
         setIsMuted(prev => !prev);
@@ -35,7 +67,7 @@ export default function ReelsScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: colors.black as any }]}>
-            <FlatList
+            <Animated.FlatList
                 data={VIDEOS}
                 keyExtractor={(_, index) => `reel-${index}`}
                 renderItem={({ item, index }) => (
@@ -57,7 +89,22 @@ export default function ReelsScreen() {
                 initialNumToRender={2}
                 maxToRenderPerBatch={3}
                 windowSize={5}
+                onScroll={scrollHandler}
+                scrollEventThrottle={16}
             />
+
+            <TouchableOpacity
+                style={[styles.backButton, { top: insets.top + 10 }]}
+                onPress={() => {
+                    if (router.canGoBack()) {
+                        router.back();
+                    } else {
+                        router.replace('/');
+                    }
+                }}
+            >
+                <SymbolView name={{ ios: 'chevron.left', android: 'chevron_left' }} size={20} tintColor={colors.white as any} />
+            </TouchableOpacity>
         </View>
     );
 }
@@ -66,4 +113,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
+    backButton: {
+        position: 'absolute',
+        left: 16,
+        zIndex: 10,
+        padding: 8,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        borderRadius: 20,
+    }
 });
