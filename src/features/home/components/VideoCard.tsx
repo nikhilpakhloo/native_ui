@@ -1,13 +1,18 @@
 import { useColorTheme } from '@/hooks/useColorTheme';
+import { useIsFocused } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, View, Pressable } from 'react-native';
-import { runOnJS, SharedValue, useAnimatedReaction } from 'react-native-reanimated';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { SharedValue, useAnimatedReaction } from 'react-native-reanimated';
+import { runOnJS } from 'react-native-worklets';
 
 function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: string, isFocused: boolean, thumbnailUrl: string }) {
+    const [isMuted, setIsMuted] = useState(true);
+
     const player = useVideoPlayer(videoUrl, player => {
         player.loop = true;
+        player.muted = true;
     });
 
     useEffect(() => {
@@ -16,7 +21,13 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
         } else {
             player.pause();
         }
-    }, [isFocused]);
+    }, [isFocused, player]);
+
+    const toggleMute = () => {
+        const newMutedState = !isMuted;
+        setIsMuted(newMutedState);
+        player.muted = newMutedState;
+    };
 
     return (
         <View style={styles.thumbnail}>
@@ -30,14 +41,24 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
             {!isFocused && (
                 <Image source={{ uri: thumbnailUrl }} style={StyleSheet.absoluteFill} />
             )}
+            {isFocused && (
+                <Pressable style={styles.muteButton} onPress={toggleMute}>
+                    <SymbolView
+                        name={isMuted ? { ios: 'speaker.slash.fill', android: 'volume_off' } : { ios: 'speaker.wave.2.fill', android: 'volume_up' }}
+                        size={16}
+                        tintColor="white"
+                    />
+                </Pressable>
+            )}
         </View>
     );
 }
 
 export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item: any, index: number, activeVideoIndexSV: SharedValue<number> }) => {
-    const { isDark, colors } = useColorTheme();
+    const { colors } = useColorTheme();
     const textColor = colors.text as any;
     const subtextColor = colors.textSecondary as any;
+    const isScreenFocused = useIsFocused();
 
     const [isFocused, setIsFocused] = useState(index === 0);
     const [isNearby, setIsNearby] = useState(index <= 1);
@@ -63,9 +84,10 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
 
     return (
         <View style={styles.card}>
+            {/* eslint-disable-next-line react-hooks/immutability */}
             <Pressable onLongPress={() => { activeVideoIndexSV.value = index; }}>
                 {isNearby ? (
-                    <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={isFocused} thumbnailUrl={item.thumbnailUrl} />
+                    <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={isFocused && isScreenFocused} thumbnailUrl={item.thumbnailUrl} />
                 ) : (
                     <Image source={{ uri: item.thumbnailUrl }} style={[styles.thumbnail, { backgroundColor: colors.black as any }]} />
                 )}
@@ -91,6 +113,8 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
     );
 });
 
+VideoCard.displayName = 'VideoCard';
+
 const styles = StyleSheet.create({
     card: {
         marginBottom: 15,
@@ -99,6 +123,16 @@ const styles = StyleSheet.create({
     thumbnail: {
         width: '100%',
         aspectRatio: 16 / 9,
+    },
+    muteButton: {
+        position: 'absolute',
+        top: 12,
+        right: 12,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        padding: 8,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     metaContainer: {
         flexDirection: 'row',

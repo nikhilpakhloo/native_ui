@@ -10,20 +10,8 @@ import { VideoCard } from '../components/VideoCard';
 const ITEM_HEIGHT = (screenWidth * 9 / 16) + 15 + 12 + 60;
 const HLS_URLS = [
     {
-        id: "v1",
-        url: "http://sample.vodobox.net/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8"
-    },
-    {
-        id: "v2",
-        url: "http://playertest.longtailvideo.com/adaptive/wowzaid3/playlist.m3u8"
-    },
-    {
         id: "v3",
         url: "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8"
-    },
-    {
-        id: "v4",
-        url: "https://diceyk6a7voy4.cloudfront.net/e78752a1-2e83-43fa-85ae-3d508be29366/hls/fitfest-sample-1_Ott_Hls_Ts_Avc_Aac_16x9_1280x720p_30Hz_6.0Mbps_qvbr.m3u8"
     },
     {
         id: "v5",
@@ -64,11 +52,13 @@ export default function HomeScreen() {
 
             if (diff > 5) {
                 if (tabBarOffset.value !== 100) {
+                    // eslint-disable-next-line react-hooks/immutability
                     tabBarOffset.value = withTiming(100, { duration: 300 });
                 }
             }
             else if (diff < -5) {
                 if (tabBarOffset.value !== 0) {
+                    // eslint-disable-next-line react-hooks/immutability
                     tabBarOffset.value = withTiming(0, { duration: 300 });
                 }
             }
@@ -77,21 +67,22 @@ export default function HomeScreen() {
         },
     });
 
-    const onViewableItemsChanged = useRef(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    const onViewableItemsChanged = React.useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
         if (viewableItems.length > 0) {
             const newIndex = viewableItems[0].index ?? 0;
             if (debounceTimeoutRef.current) {
                 clearTimeout(debounceTimeoutRef.current);
             }
             debounceTimeoutRef.current = setTimeout(() => {
+                // eslint-disable-next-line react-hooks/immutability
                 activeVideoIndexSV.value = newIndex;
             }, 300);
         }
-    }).current;
+    }, [activeVideoIndexSV]);
 
-    const viewabilityConfig = useRef({
+    const viewabilityConfig = React.useMemo(() => ({
         itemVisiblePercentThreshold: 50
-    }).current;
+    }), []);
 
     const renderItem = React.useCallback(({ item, index }: { item: any, index: number }) => {
         return <VideoCard item={item} index={index} activeVideoIndexSV={activeVideoIndexSV} />;
