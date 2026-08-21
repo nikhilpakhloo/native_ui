@@ -1,4 +1,4 @@
-import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal, BottomSheetModalProvider, BottomSheetView } from '@gorhom/bottom-sheet';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { BackHandler, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -11,7 +11,7 @@ export const BottomSheetContext = createContext<{
 
 export function useBottomSheet() {
   const context = useContext(BottomSheetContext);
-  if (!context) throw new Error('useBottomSheet must be used within DistrictBottomSheetProvider');
+  if (!context) throw new Error('useBottomSheet must be used within BottomSheetProvider');
   return context;
 }
 
@@ -20,7 +20,7 @@ import { useColorTheme } from '@/hooks/useColorTheme';
 export function BottomSheetProvider({ children }: { children: React.ReactNode }) {
   const { isDark, colors } = useColorTheme();
   const animatedIndex = useSharedValue(-1);
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheetModal>(null);
   const [content, setContent] = useState<React.ReactNode>(null);
   const isOpenRef = useRef(false);
 
@@ -31,7 +31,7 @@ export function BottomSheetProvider({ children }: { children: React.ReactNode })
   useEffect(() => {
     const backAction = () => {
       if (isOpenRef.current) {
-        bottomSheetRef.current?.close();
+        bottomSheetRef.current?.dismiss();
         return true;
       }
       return false;
@@ -47,11 +47,11 @@ export function BottomSheetProvider({ children }: { children: React.ReactNode })
 
   const expand = useCallback((newContent?: React.ReactNode) => {
     if (newContent) setContent(newContent);
-    bottomSheetRef.current?.expand();
+    bottomSheetRef.current?.present();
   }, []);
 
   const close = useCallback(() => {
-    bottomSheetRef.current?.close();
+    bottomSheetRef.current?.dismiss();
   }, []);
 
   const mainContentStyle = useAnimatedStyle(() => {
@@ -78,28 +78,29 @@ export function BottomSheetProvider({ children }: { children: React.ReactNode })
   return (
     <GestureHandlerRootView style={styles.root}>
       <BottomSheetContext.Provider value={{ expand, close }}>
-        <Animated.View style={[styles.main, mainContentStyle]}>
-          {children}
-        </Animated.View>
+        <BottomSheetModalProvider>
+          <Animated.View style={[styles.main, mainContentStyle]}>
+            {children}
+          </Animated.View>
 
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={-1}
-          snapPoints={['50%', '80%']}
-          enablePanDownToClose
-          onChange={handleSheetChanges}
-          animatedIndex={animatedIndex}
-          handleIndicatorStyle={{ backgroundColor: colors.textSecondary as any, width: 40 }}
-          backgroundStyle={[styles.sheetBackground, { backgroundColor: colors.background as any }]}
-        >
-          <BottomSheetView style={styles.sheetContent}>
-            {content || (
-              <View style={styles.defaultContent}>
-                <Text style={[styles.title, { color: colors.text as any }]}>Bottom Sheet</Text>
-              </View>
-            )}
-          </BottomSheetView>
-        </BottomSheet>
+          <BottomSheetModal
+            ref={bottomSheetRef}
+            snapPoints={['50%', '80%']}
+            enablePanDownToClose
+            onChange={handleSheetChanges}
+            animatedIndex={animatedIndex}
+            handleIndicatorStyle={{ backgroundColor: colors.textSecondary as any, width: 40 }}
+            backgroundStyle={[styles.sheetBackground, { backgroundColor: colors.background as any }]}
+          >
+            <BottomSheetView style={styles.sheetContent}>
+              {content || (
+                <View style={styles.defaultContent}>
+                  <Text style={[styles.title, { color: colors.text as any }]}>Bottom Sheet</Text>
+                </View>
+              )}
+            </BottomSheetView>
+          </BottomSheetModal>
+        </BottomSheetModalProvider>
       </BottomSheetContext.Provider>
     </GestureHandlerRootView>
   );

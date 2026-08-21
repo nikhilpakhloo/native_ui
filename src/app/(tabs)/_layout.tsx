@@ -169,8 +169,8 @@ function TabsContent() {
         <Tabs.Screen
           name="categories"
           options={{
-            title: 'Categories',
-            tabBarIcon: ({ color }) => <SymbolView name={{ ios: 'list.dash', android: 'dashboard' }} size={24} tintColor={color} />,
+            title: 'Reel',
+            tabBarIcon: ({ color }) => <SymbolView name={{ ios: 'play.rectangle.on.rectangle', android: 'video_library' }} size={24} tintColor={color} />,
           }}
         />
         <Tabs.Screen
