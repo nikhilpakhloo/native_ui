@@ -167,7 +167,7 @@ function TabsContent() {
           }}
         />
         <Tabs.Screen
-          name="categories"
+          name="reels"
           options={{
             title: 'Reel',
             tabBarIcon: ({ color }) => <SymbolView name={{ ios: 'play.rectangle.on.rectangle', android: 'video_library' }} size={24} tintColor={color} />,
