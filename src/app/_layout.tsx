@@ -4,8 +4,10 @@ import {
   Stack,
   ThemeProvider,
 } from "expo-router";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { BottomSheetProvider } from "../commonui/BottomSheet";
+import GlobalPlayerOverlay from "@/components/GlobalPlayerOverlay";
 
 import { useColorTheme } from "@/hooks/useColorTheme";
 
@@ -16,30 +18,22 @@ export default function RootLayout() {
     dark: isDark,
     colors: {
       ...DefaultTheme.colors,
-      background: isDark
-        ? Platform.OS === "android"
-          ? Color.android.background_dark
-          : Color.ios.tertiarySystemBackground
-        : DefaultTheme.colors.background,
+      background: colors.background as string,
     },
   };
   return (
-    <ThemeProvider value={theme}>
-      <BottomSheetProvider>
-        <Stack>
-          <Stack.Screen
-            name="(tabs)"
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="video-player"
-            options={{
-              presentation: 'modal',
-              headerShown: false,
-            }}
-          />
-        </Stack>
-      </BottomSheetProvider>
-    </ThemeProvider>
+    <GestureHandlerRootView style={StyleSheet.absoluteFill}>
+      <ThemeProvider value={theme}>
+        <BottomSheetProvider>
+          <Stack>
+            <Stack.Screen
+              name="(tabs)"
+              options={{ headerShown: false }}
+            />
+          </Stack>
+          <GlobalPlayerOverlay />
+        </BottomSheetProvider>
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

@@ -17,13 +17,15 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
         player.muted = true;
     });
 
+    const activeVideoOverlay = useVideoStore(state => state.activeVideo);
+
     useEffect(() => {
-        if (isFocused) {
+        if (isFocused && !activeVideoOverlay) {
             player.play();
         } else {
             player.pause();
         }
-    }, [isFocused, player]);
+    }, [isFocused, activeVideoOverlay, player]);
 
     const toggleMute = () => {
         const newMutedState = !isMuted;
@@ -45,6 +47,7 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
             )}
             {isFocused && (
                 <Pressable style={styles.muteButton} onPress={toggleMute}>
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.black as any, opacity: 0.6, borderRadius: 20 }]} pointerEvents="none" />
                     <SymbolView
                         name={isMuted ? { ios: 'speaker.slash.fill', android: 'volume_off' } : { ios: 'speaker.wave.2.fill', android: 'volume_up' }}
                         size={16}
@@ -90,14 +93,12 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
     return (
         <Pressable style={styles.card} onPress={() => {
             setActiveVideo(item);
-            router.push('/video-player');
         }}>
             {/* eslint-disable-next-line react-hooks/immutability */}
             <Pressable
                 onLongPress={() => { activeVideoIndexSV.value = index; }}
                 onPress={() => {
                     setActiveVideo(item);
-                    router.push('/video-player');
                 }}
             >
                 {isNearby ? (
@@ -142,7 +143,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 12,
         right: 12,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         padding: 8,
         borderRadius: 20,
         alignItems: 'center',

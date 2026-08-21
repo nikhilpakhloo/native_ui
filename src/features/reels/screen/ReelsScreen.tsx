@@ -109,6 +109,7 @@ export default function ReelsScreen() {
                     }
                 }}
             >
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.black as any, opacity: 0.5, borderRadius: 20 }]} pointerEvents="none" />
                 <SymbolView name={{ ios: 'chevron.left', android: 'chevron_left' }} size={20} tintColor={colors.white as any} />
             </TouchableOpacity>
         </View>
@@ -124,7 +125,6 @@ const styles = StyleSheet.create({
         left: 16,
         zIndex: 10,
         padding: 8,
-        backgroundColor: 'rgba(0,0,0,0.5)',
         borderRadius: 20,
     }
 });
