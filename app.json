@@ -43,7 +43,12 @@
           "imageWidth": 76
         }
       ],
-      "expo-video"
+      [
+        "expo-video",
+        {
+          "supportsPictureInPicture": true
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,

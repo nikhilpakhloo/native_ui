@@ -1,5 +1,6 @@
 import { useColorTheme } from '@/hooks/useColorTheme';
-import { useIsFocused } from 'expo-router';
+import { useVideoStore } from '@/store/videoStore';
+import { router, useIsFocused } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { useVideoPlayer, VideoView } from 'expo-video';
 import React, { useEffect, useState } from 'react';
@@ -57,6 +58,7 @@ function ActiveVideoPlayer({ videoUrl, isFocused, thumbnailUrl }: { videoUrl: st
 
 export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item: any, index: number, activeVideoIndexSV: SharedValue<number> }) => {
     const { colors } = useColorTheme();
+    const { setActiveVideo, activeVideo } = useVideoStore();
     const textColor = colors.text as any;
     const subtextColor = colors.textSecondary as any;
     const isScreenFocused = useIsFocused();
@@ -83,12 +85,23 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
         [index, activeVideoIndexSV]
     );
 
+    const shouldPlayLocal = isFocused && isScreenFocused && !activeVideo;
+
     return (
-        <View style={styles.card}>
+        <Pressable style={styles.card} onPress={() => {
+            setActiveVideo(item);
+            router.push('/video-player');
+        }}>
             {/* eslint-disable-next-line react-hooks/immutability */}
-            <Pressable onLongPress={() => { activeVideoIndexSV.value = index; }}>
+            <Pressable
+                onLongPress={() => { activeVideoIndexSV.value = index; }}
+                onPress={() => {
+                    setActiveVideo(item);
+                    router.push('/video-player');
+                }}
+            >
                 {isNearby ? (
-                    <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={isFocused && isScreenFocused} thumbnailUrl={item.thumbnailUrl} />
+                    <ActiveVideoPlayer videoUrl={item.videoUrl} isFocused={shouldPlayLocal} thumbnailUrl={item.thumbnailUrl} />
                 ) : (
                     <Image source={{ uri: item.thumbnailUrl }} style={[styles.thumbnail, { backgroundColor: colors.black as any }]} />
                 )}
@@ -110,7 +123,7 @@ export const VideoCard = React.memo(({ item, index, activeVideoIndexSV }: { item
                     <SymbolView name={{ ios: 'ellipsis', android: 'more_vert' }} size={16} tintColor={textColor} />
                 </View>
             </View>
-        </View>
+        </Pressable>
     );
 });
 

@@ -4,7 +4,7 @@ import {
   Stack,
   ThemeProvider,
 } from "expo-router";
-import { Platform, useColorScheme } from "react-native";
+import { Platform } from "react-native";
 import { BottomSheetProvider } from "../commonui/BottomSheet";
 
 import { useColorTheme } from "@/hooks/useColorTheme";
@@ -30,6 +30,13 @@ export default function RootLayout() {
           <Stack.Screen
             name="(tabs)"
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="video-player"
+            options={{
+              presentation: 'modal',
+              headerShown: false,
+            }}
           />
         </Stack>
       </BottomSheetProvider>
